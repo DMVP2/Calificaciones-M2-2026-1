@@ -1,470 +1,507 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Matemáticas 2 · Notas Corte 3</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Oxanium:wght@300;400;600;800&display=swap" rel="stylesheet" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <style>
-    :root {
-      --bg:        #05050a;
-      --green:     #00ff88;
-      --green-dim: #00cc6a;
-      --orange:    #ff6b00;
-      --orange-dim:#cc5500;
-      --blue:      #00cfff;
-      --blue-dim:  #009dbf;
-      --purple:    #b06bff;
-      --white:     #f0e8f8;
-      --glow-g:    0 0 8px #00ff88, 0 0 20px #00ff8866;
-      --glow-o:    0 0 8px #ff6b00, 0 0 20px #ff6b0066;
-      --glow-b:    0 0 8px #00cfff, 0 0 20px #00cfff66;
-      --glow-p:    0 0 8px #b06bff, 0 0 20px #b06bff66;
-      --font-mono: 'Share Tech Mono', monospace;
-      --font-main: 'Oxanium', sans-serif;
-    }
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body {
-      background: var(--bg); color: var(--white);
-      font-family: var(--font-main); min-height: 100vh;
-      overflow-x: hidden; cursor: none;
-    }
-    .cursor {
-      position: fixed; top: 0; left: 0; width: 12px; height: 12px;
-      background: var(--blue); border-radius: 50%; pointer-events: none;
-      z-index: 9999; box-shadow: var(--glow-b);
-      transition: transform 0.1s, background 0.2s; transform: translate(-50%, -50%);
-    }
-    .cursor-ring {
-      position: fixed; top: 0; left: 0; width: 36px; height: 36px;
-      border: 1px solid var(--blue); border-radius: 50%; pointer-events: none;
-      z-index: 9998; opacity: 0.5; transform: translate(-50%, -50%);
-      transition: transform 0.15s ease, width 0.2s, height 0.2s, border-color 0.2s;
-    }
-    body::before {
-      content: ''; position: fixed; inset: 0;
-      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px);
-      pointer-events: none; z-index: 100;
-    }
-    .grid-bg {
-      position: fixed; inset: 0;
-      background-image:
-        linear-gradient(rgba(0,207,255,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,207,255,0.03) 1px, transparent 1px);
-      background-size: 48px 48px; pointer-events: none; z-index: 0;
-    }
-    .blob { position: fixed; border-radius: 50%; filter: blur(80px); opacity: 0.10; pointer-events: none; z-index: 0; animation: drift 18s ease-in-out infinite alternate; }
-    .blob-1 { width:500px; height:500px; background:var(--blue);   top:-120px; left:-120px; animation-duration:20s; }
-    .blob-2 { width:400px; height:400px; background:var(--purple); bottom:-100px; right:-100px; animation-duration:26s; }
-    .blob-3 { width:350px; height:350px; background:var(--orange); top:45%; left:55%; animation-duration:16s; }
-    @keyframes drift { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(40px,30px) scale(1.08); } }
-    main { position: relative; z-index: 1; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PIXEL SCANNER // Clasificador IA</title>
 
-    /* ── Header ── */
-    header { padding: 60px 24px 40px; text-align: center; }
-    .badge {
-      display: inline-block; font-family: var(--font-mono); font-size: 0.7rem;
-      color: var(--blue); border: 1px solid var(--blue); padding: 4px 14px;
-      letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 20px;
-      box-shadow: var(--glow-b); animation: pulse-border 3s ease-in-out infinite;
-    }
-    @keyframes pulse-border { 0%,100% { box-shadow: var(--glow-b); } 50% { box-shadow: 0 0 16px #00cfff, 0 0 40px #00cfff44; } }
-    h1 { font-size: clamp(1.6rem,5vw,3.6rem); font-weight: 800; line-height: 1.05; letter-spacing: -0.02em; text-transform: uppercase; }
-    h1 .line-blue   { color: var(--blue);   text-shadow: var(--glow-b); }
-    h1 .line-white  { color: var(--white); }
-    .subtitle { margin-top: 16px; font-family: var(--font-mono); font-size: 0.85rem; color: #6a8a9a; letter-spacing: 0.1em; }
-    .subtitle span { color: var(--purple); text-shadow: var(--glow-p); }
+<!--
+  ================================================================
+  CÓMO CONFIGURAR TU MODELO DE TEACHABLE MACHINE
+  ================================================================
+  1. Entra a https://teachablemachine.withgoogle.com/ y entrena tu
+     proyecto de tipo "Image Project".
+  2. Haz clic en "Export Model" -> pestaña "Upload (shareable link)"
+     -> "Upload my model".
+  3. Copia el enlace que te da (algo como:
+     https://teachablemachine.withgoogle.com/models/AbCdEfGh1/ )
+  4. Pégalo abajo en la constante MODEL_URL (línea ~330 del <script>)
+     o simplemente pégalo en el campo "MODEL URL" de la web una vez
+     publicada — funciona igual.
+  ================================================================
+-->
 
-    /* ── Divider ── */
-    .divider { display: flex; align-items: center; gap: 16px; max-width: 700px; margin: 40px auto; padding: 0 24px; }
-    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; }
-    .divider::before { background: linear-gradient(90deg, transparent, var(--purple)); }
-    .divider::after  { background: linear-gradient(90deg, var(--purple), transparent); }
-    .divider-icon { width: 8px; height: 8px; background: var(--purple); transform: rotate(45deg); box-shadow: var(--glow-p); flex-shrink: 0; }
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 
-    /* ── Status ── */
-    #statusBar {
-      max-width: 600px; margin: 0 auto 16px; padding: 0 24px;
-      font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.12em;
-      text-align: center; min-height: 20px;
-    }
-    #statusBar.loading { color: var(--blue); }
-    #statusBar.ready   { color: var(--green-dim); }
-    #statusBar.error   { color: var(--orange); }
+<style>
+  :root{
+    --bg:            #0a0e17;
+    --panel:         #0f1622;
+    --panel-edge:    #1c2636;
+    --green:         #39ff6a;
+    --orange:        #ff8a1e;
+    --blue:          #23d5ff;
+    --text:          #e6f1ff;
+    --text-dim:      #6f84a3;
+    --danger:        #ff3b5c;
+  }
 
-    /* ── Search ── */
-    .search-section { max-width: 600px; margin: 0 auto 48px; padding: 0 24px; text-align: center; }
-    .search-label { font-family: var(--font-mono); font-size: 0.75rem; color: var(--purple); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 12px; display: block; }
-    .search-wrap { position: relative; display: flex; align-items: center; }
-    .search-prompt { font-family: var(--font-mono); font-size: 1rem; color: var(--blue); padding: 0 0 0 18px; position: absolute; pointer-events: none; text-shadow: var(--glow-b); }
-    #searchInput {
-      width: 100%; background: rgba(0,207,255,0.04); border: 1px solid var(--blue);
-      border-radius: 0; color: var(--blue); font-family: var(--font-mono);
-      font-size: 1.1rem; padding: 14px 14px 14px 42px; outline: none;
-      letter-spacing: 0.1em; box-shadow: inset 0 0 20px rgba(0,207,255,0.05), var(--glow-b);
-      transition: box-shadow 0.3s, background 0.3s; caret-color: var(--blue);
-    }
-    #searchInput:focus { background: rgba(0,207,255,0.08); box-shadow: inset 0 0 30px rgba(0,207,255,0.1), 0 0 20px #00cfff66, 0 0 60px #00cfff22; }
-    #searchInput::placeholder { color: #1a3a4a; }
-    #searchInput:disabled { opacity: 0.4; cursor: not-allowed; }
+  *{ box-sizing:border-box; }
 
-    /* ── Result card ── */
-    #result { max-width: 660px; margin: 0 auto 64px; padding: 0 24px; display: none; }
-    #result.visible { display: block; animation: fadeUp 0.4s ease; }
-    @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+  html,body{
+    margin:0; padding:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:'VT323', monospace;
+    min-height:100vh;
+    overflow-x:hidden;
+  }
 
-    .card { border: 1px solid #101a25; background: rgba(5,8,15,0.92); padding: 0; overflow: hidden; position: relative; }
-    .card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background: linear-gradient(90deg, var(--blue), var(--purple), var(--orange)); }
+  body{
+    background-image:
+      linear-gradient(rgba(35,213,255,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(35,213,255,0.035) 1px, transparent 1px);
+    background-size: 24px 24px;
+    position:relative;
+  }
 
-    .card-header { padding: 24px 28px 20px; border-bottom: 1px solid #0d1a25; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; }
-    .student-name { font-size: 1.15rem; font-weight: 600; color: var(--white); letter-spacing: 0.05em; }
-    .student-id { font-family: var(--font-mono); font-size: 0.8rem; color: var(--blue); margin-top: 4px; }
-    .corte-badge { font-family: var(--font-mono); font-size: 0.7rem; color: var(--purple); border: 1px solid var(--purple); padding: 4px 12px; letter-spacing: 0.15em; box-shadow: var(--glow-p); }
+  /* --- scanline / CRT overlay --- */
+  .scanlines{
+    pointer-events:none;
+    position:fixed; inset:0; z-index:50;
+    background:repeating-linear-gradient(
+      to bottom,
+      rgba(0,0,0,0) 0px,
+      rgba(0,0,0,0) 2px,
+      rgba(0,0,0,0.18) 3px,
+      rgba(0,0,0,0) 4px
+    );
+    mix-blend-mode:overlay;
+  }
+  .vignette{
+    pointer-events:none;
+    position:fixed; inset:0; z-index:49;
+    box-shadow: inset 0 0 180px rgba(0,0,0,0.85);
+  }
 
-    /* ── Scores grid — 3 bloques ── */
-    .scores-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; border-bottom: 1px solid #0d1a25; }
-    .score-block { padding: 20px 22px; border-right: 1px solid #0d1a25; }
-    .score-block:last-child { border-right: none; }
-    .score-label { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: #4a6a7a; margin-bottom: 8px; }
-    .score-value { font-size: 1.8rem; font-weight: 800; line-height: 1; }
-    .score-weight { font-family: var(--font-mono); font-size: 0.65rem; color: #3a5a6a; margin-top: 6px; }
-    .col-blue   .score-value { color: var(--blue);   text-shadow: var(--glow-b); }
-    .col-purple .score-value { color: var(--purple);  text-shadow: var(--glow-p); }
-    .col-orange .score-value { color: var(--orange);  text-shadow: var(--glow-o); }
+  /* --- layout --- */
+  .wrap{
+    max-width:960px;
+    margin:0 auto;
+    padding:32px 20px 64px;
+    position:relative;
+    z-index:1;
+  }
 
-    /* ── Breakdown ── */
-    .breakdown { padding: 20px 28px; border-bottom: 1px solid #0d1a25; }
-    .breakdown-title { font-family: var(--font-mono); font-size: 0.65rem; color: #4a6a7a; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 14px; }
-    .item-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 1px solid #0d1520; font-size: 0.88rem; }
-    .item-row:last-child { border-bottom: none; }
-    .item-name { color: #7a9aaa; }
-    .item-val { font-family: var(--font-mono); font-size: 0.9rem; font-weight: 600; }
-    .v-blue   { color: var(--blue); }
-    .v-purple { color: var(--purple); }
-    .v-orange { color: var(--orange); }
-    .bar-wrap { width:80px; height:4px; background:#0d1520; margin-left:16px; flex-shrink:0; }
-    .bar-fill { height:100%; transition: width 0.8s ease; }
-    .bar-blue   { background:var(--blue);   box-shadow:var(--glow-b); }
-    .bar-purple { background:var(--purple);  box-shadow:var(--glow-p); }
-    .bar-orange { background:var(--orange);  box-shadow:var(--glow-o); }
+  header{
+    text-align:center;
+    margin-bottom:28px;
+  }
+  .eyebrow{
+    font-family:'Press Start 2P', monospace;
+    font-size:9px;
+    letter-spacing:3px;
+    color:var(--blue);
+    text-shadow:0 0 8px rgba(35,213,255,0.7);
+    margin-bottom:14px;
+  }
+  .eyebrow::before{ content:"> "; color:var(--green); }
+  .eyebrow .blink{ animation:blink 1s steps(1) infinite; }
+  @keyframes blink{ 50%{ opacity:0; } }
 
-    /* ── Finals ── */
-    .finals { display: grid; grid-template-columns: 1fr 1fr; }
-    .final-block { padding: 24px 28px; border-right: 1px solid #0d1a25; text-align: center; }
-    .final-block:last-child { border-right: none; }
-    .final-label { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.2em; color: #4a6a7a; text-transform: uppercase; margin-bottom: 10px; }
-    .final-big { font-size: 3rem; font-weight: 800; line-height: 1; }
-    .final-sala .final-big { color: var(--green);  text-shadow: 0 0 12px #00ff88, 0 0 40px #00ff8866; }
-    .final-def  .final-big { color: var(--blue);   text-shadow: 0 0 12px #00cfff, 0 0 40px #00cfff66; }
-    .final-sub { font-family: var(--font-mono); font-size: 0.7rem; margin-top: 6px; }
-    .final-sala .final-sub { color: var(--green-dim); }
-    .final-def  .final-sub { color: var(--blue-dim); }
+  h1{
+    font-family:'Press Start 2P', monospace;
+    font-size:clamp(20px, 5vw, 34px);
+    line-height:1.5;
+    margin:0 0 12px;
+    color:var(--text);
+    text-shadow:
+      3px 3px 0 var(--orange),
+      6px 6px 0 rgba(0,0,0,0.6);
+  }
+  h1 span{ color:var(--green); text-shadow:3px 3px 0 var(--blue), 6px 6px 0 rgba(0,0,0,0.6); }
 
-    .bono-strip { padding: 12px 28px; border-top: 1px solid #0d1a25; display: flex; justify-content: space-between; align-items: center; font-family: var(--font-mono); font-size: 0.75rem; color: #4a6a7a; background: rgba(176,107,255,0.03); flex-wrap: wrap; gap: 8px; }
-    .bono-strip .bval { color: var(--purple); font-size: 0.9rem; font-weight: 600; }
+  .subtitle{
+    font-size:20px;
+    color:var(--text-dim);
+    max-width:560px;
+    margin:0 auto;
+  }
 
-    .not-found { text-align: center; padding: 40px 28px; font-family: var(--font-mono); color: var(--orange); }
+  /* --- pixel panel frame (stepped corners) --- */
+  .pixel-panel{
+    background:var(--panel);
+    border:2px solid var(--panel-edge);
+    padding:18px;
+    position:relative;
+    clip-path: polygon(
+      0 12px, 12px 12px, 12px 0,
+      calc(100% - 12px) 0, calc(100% - 12px) 12px, 100% 12px,
+      100% calc(100% - 12px), calc(100% - 12px) calc(100% - 12px), calc(100% - 12px) 100%,
+      12px 100%, 12px calc(100% - 12px), 0 calc(100% - 12px)
+    );
+  }
+  .pixel-panel::before{
+    content:"";
+    position:absolute; inset:0;
+    padding:2px;
+    clip-path: inherit;
+    background: linear-gradient(135deg, var(--green), var(--blue), var(--orange));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity:0.9;
+    animation:cycle 6s linear infinite;
+    pointer-events:none;
+  }
+  @keyframes cycle{
+    0%,100%{ filter:hue-rotate(0deg); }
+    50%{ filter:hue-rotate(25deg); }
+  }
 
-    footer { text-align: center; padding: 32px 24px 48px; border-top: 1px solid #0d1520; font-family: var(--font-mono); font-size: 0.7rem; color: #1a3a4a; position: relative; z-index: 1; }
-    footer span { color: #3a5a6a; }
+  .panel-label{
+    font-family:'Press Start 2P', monospace;
+    font-size:10px;
+    letter-spacing:2px;
+    color:var(--orange);
+    margin-bottom:14px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .panel-label::before{
+    content:"";
+    width:8px; height:8px;
+    background:var(--green);
+    box-shadow:0 0 8px var(--green);
+    display:inline-block;
+  }
 
-    @media (max-width: 600px) {
-      .scores-grid { grid-template-columns: 1fr 1fr; }
-      .scores-grid .score-block:nth-child(3) { grid-column: 1 / -1; }
-      .finals { grid-template-columns: 1fr; }
-      .final-block { border-right: none; border-bottom: 1px solid #0d1a25; }
-      .final-block:last-child { border-bottom: none; }
-      .bono-strip { font-size: 0.68rem; }
-    }
-  </style>
+  /* --- stage: webcam + status --- */
+  .stage{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap:20px;
+    margin-bottom:20px;
+  }
+  @media(min-width:720px){
+    .stage{ grid-template-columns: 300px 1fr; }
+  }
+
+  .cam-box{
+    aspect-ratio:1/1;
+    background:#060a11;
+    border:2px dashed var(--panel-edge);
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden;
+    position:relative;
+  }
+  .cam-box canvas, .cam-box video{
+    width:100%; height:100%;
+    object-fit:cover;
+    image-rendering:pixelated;
+  }
+  .cam-placeholder{
+    font-size:18px;
+    color:var(--text-dim);
+    text-align:center;
+    padding:20px;
+  }
+  .cam-placeholder .icon{
+    font-family:'Press Start 2P', monospace;
+    font-size:28px;
+    color:var(--blue);
+    margin-bottom:10px;
+    text-shadow:0 0 10px rgba(35,213,255,0.6);
+  }
+
+  /* --- predictions as chunky pixel bars --- */
+  .predictions{ display:flex; flex-direction:column; gap:14px; justify-content:center; }
+  .pred-row{ display:flex; flex-direction:column; gap:6px; }
+  .pred-row .top{
+    display:flex; justify-content:space-between;
+    font-size:19px;
+  }
+  .pred-name{ color:var(--text); }
+  .pred-pct{ font-family:'Press Start 2P', monospace; font-size:11px; }
+
+  .bar-track{
+    height:18px;
+    background:#060a11;
+    border:2px solid var(--panel-edge);
+    padding:2px;
+  }
+  .bar-fill{
+    height:100%;
+    width:0%;
+    background-repeat:repeat-x;
+    background-size:8px 100%;
+    transition:width 0.15s linear;
+  }
+  /* segmented "8-bit" look using striped gradient */
+  .c0 .bar-fill{ background-image: repeating-linear-gradient(90deg, var(--green) 0 6px, #061b0e 6px 8px); box-shadow:0 0 10px rgba(57,255,106,0.5); }
+  .c1 .bar-fill{ background-image: repeating-linear-gradient(90deg, var(--orange) 0 6px, #1b0f04 6px 8px); box-shadow:0 0 10px rgba(255,138,30,0.5); }
+  .c2 .bar-fill{ background-image: repeating-linear-gradient(90deg, var(--blue) 0 6px, #041a20 6px 8px); box-shadow:0 0 10px rgba(35,213,255,0.5); }
+  .c0 .pred-pct{ color:var(--green); }
+  .c1 .pred-pct{ color:var(--orange); }
+  .c2 .pred-pct{ color:var(--blue); }
+
+  .empty-msg{ color:var(--text-dim); font-size:18px; }
+
+  /* --- controls --- */
+  .controls{
+    display:flex; flex-wrap:wrap; gap:14px; justify-content:center;
+    margin:24px 0;
+  }
+  .btn{
+    font-family:'Press Start 2P', monospace;
+    font-size:12px;
+    letter-spacing:1px;
+    padding:14px 22px;
+    border:none;
+    cursor:pointer;
+    background:var(--green);
+    color:#04160a;
+    box-shadow:4px 4px 0 rgba(0,0,0,0.7);
+    clip-path: polygon(0 6px,6px 6px,6px 0,calc(100% - 6px) 0,calc(100% - 6px) 6px,100% 6px,100% calc(100% - 6px),calc(100% - 6px) calc(100% - 6px),calc(100% - 6px) 100%,6px 100%,6px calc(100% - 6px),0 calc(100% - 6px));
+    transition:transform 0.05s ease;
+  }
+  .btn:active{ transform:translate(3px,3px); box-shadow:1px 1px 0 rgba(0,0,0,0.7); }
+  .btn:disabled{ opacity:0.35; cursor:not-allowed; }
+  .btn.orange{ background:var(--orange); color:#1b0f04; }
+  .btn.blue{ background:var(--blue); color:#041a20; }
+  .btn.ghost{ background:transparent; color:var(--text); border:2px solid var(--panel-edge); box-shadow:none; }
+
+  /* --- status line --- */
+  .status{
+    text-align:center;
+    font-size:18px;
+    color:var(--text-dim);
+    margin-bottom:8px;
+    min-height:24px;
+  }
+  .status.ok{ color:var(--green); }
+  .status.err{ color:var(--danger); }
+
+  /* --- config panel --- */
+  details.config{ margin-top:28px; }
+  details.config summary{
+    cursor:pointer;
+    font-family:'Press Start 2P', monospace;
+    font-size:10px;
+    letter-spacing:2px;
+    color:var(--blue);
+    padding:10px 0;
+  }
+  .config-body{ padding-top:14px; display:flex; flex-direction:column; gap:10px; }
+  .config-body label{ font-size:16px; color:var(--text-dim); }
+  .config-body input{
+    width:100%;
+    background:#060a11;
+    border:2px solid var(--panel-edge);
+    color:var(--text);
+    font-family:'VT323', monospace;
+    font-size:18px;
+    padding:10px;
+  }
+  .config-body input:focus{ outline:2px solid var(--blue); }
+
+  footer{
+    text-align:center;
+    color:var(--text-dim);
+    font-size:15px;
+    margin-top:40px;
+    line-height:1.6;
+  }
+  footer b{ color:var(--text); }
+
+  @media (prefers-reduced-motion: reduce){
+    .eyebrow .blink, .pixel-panel::before{ animation:none; }
+  }
+</style>
 </head>
 <body>
-<div class="cursor" id="cursor"></div>
-<div class="cursor-ring" id="cursorRing"></div>
-<div class="grid-bg"></div>
-<div class="blob blob-1"></div>
-<div class="blob blob-2"></div>
-<div class="blob blob-3"></div>
 
-<main>
+<div class="scanlines"></div>
+<div class="vignette"></div>
+
+<div class="wrap">
+
   <header>
-    <div class="badge">CORTE 3 · 2026-1</div>
-    <h1>
-      <span class="line-blue">Matemáticas 2</span><br>
-      <span class="line-white">Cálculo Integral</span>
-    </h1>
-    <p class="subtitle">
-      Grupo <span>G2</span> &nbsp;·&nbsp;
-      David Mauricio Valoyes Porras &nbsp;·&nbsp;
-      Universidad El Bosque
-    </p>
+    <div class="eyebrow">SISTEMA LISTO<span class="blink">_</span></div>
+    <h1>RECONOCIMIENTO DE IMÁGENES <span>IA</span></h1>
+    <p class="subtitle">Clasificador de imágenes en vivo, entrenado con Teachable Machine.</p>
   </header>
 
-  <div class="divider"><div class="divider-icon"></div></div>
+  <section class="pixel-panel">
+    <div class="panel-label">CÁMARA + RESULTADOS</div>
 
-  <div id="statusBar" class="loading">&gt;_ cargando planilla...</div>
+    <div class="stage">
+      <div class="cam-box" id="cam-box">
+        <div class="cam-placeholder" id="cam-placeholder">
+          <div class="icon">▓▓▓</div>
+          Presiona START<br>para activar la cámara
+        </div>
+      </div>
 
-  <section class="search-section">
-    <span class="search-label">// consulta tu nota</span>
-    <div class="search-wrap">
-      <span class="search-prompt">&gt;_</span>
-      <input
-        type="text"
-        id="searchInput"
-        placeholder="Ingresa tu número de documento..."
-        autocomplete="off"
-        spellcheck="false"
-        disabled
-      />
+      <div class="predictions" id="predictions">
+        <div class="empty-msg">Las predicciones aparecerán aquí una vez iniciado el escaneo.</div>
+      </div>
     </div>
+
+    <div class="status" id="status">Esperando modelo…</div>
+
+    <div class="controls">
+      <button class="btn" id="btn-start">▶ START</button>
+      <button class="btn orange" id="btn-stop" disabled>■ STOP</button>
+      <button class="btn ghost" id="btn-reload">↻ RECARGAR MODELO</button>
+    </div>
+
+    <details class="config">
+      <summary>⚙ CONFIGURACIÓN DEL MODELO</summary>
+      <div class="config-body">
+        <label for="model-url">Enlace de tu modelo de Teachable Machine (Export Model → Upload):</label>
+        <input type="text" id="model-url" placeholder="https://teachablemachine.withgoogle.com/models/XXXXXXXX/">
+        <button class="btn blue" id="btn-apply-url" style="align-self:flex-start;">APLICAR</button>
+      </div>
+    </details>
   </section>
 
-  <div id="result"></div>
-</main>
+  <footer>
+    Hecho con <b>Teachable Machine</b> + <b>TensorFlow.js</b>.<br>
+    Edita <b>MODEL_URL</b> en el código o pega tu enlace arriba para usar tu propio modelo.
+  </footer>
 
-<footer>
-  <span>Matemáticas 2 · Semestre 2026-1 · Grupo G2</span>
-  &nbsp;·&nbsp; Universidad El Bosque
-</footer>
+</div>
+
+<!-- Librerías de Teachable Machine (image project) -->
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.11.0/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
 
 <script>
-// ── Helpers ───────────────────────────────────────────────────────────
-function n(v) {
-  if (v === null || v === undefined || v === '') return null;
-  if (typeof v === 'string' && (v.includes('#') || v.trim() === '')) return null;
-  const p = parseFloat(v);
-  return isNaN(p) ? null : p;
-}
-const fmt  = v => v !== null ? v.toFixed(2) : '—';
-const fmt3 = v => v !== null ? v.toFixed(3) : '—';
-const fmt1 = v => v !== null ? v.toFixed(1)  : '—';
+  // ============================================================
+  // 1) PEGA AQUÍ EL ENLACE DE TU MODELO (opción recomendada para
+  //    que quede fijo al publicar en GitHub Pages).
+  //    Ejemplo: "https://teachablemachine.withgoogle.com/models/AbCdEfGh1/"
+  // ============================================================
+  const MODEL_URL = ""; // <-- reemplaza con tu enlace, o pégalo en el panel CONFIGURACIÓN de la web
 
-function bar(val, max, cls) {
-  const pct = val !== null ? Math.min(100, (val / max) * 100) : 0;
-  return `<div class="bar-wrap"><div class="bar-fill ${cls}" style="width:${pct}%"></div></div>`;
-}
+  let model, webcam, running = false;
+  const camBox        = document.getElementById('cam-box');
+  const camPlaceholder= document.getElementById('cam-placeholder');
+  const predsBox       = document.getElementById('predictions');
+  const statusEl        = document.getElementById('status');
+  const btnStart        = document.getElementById('btn-start');
+  const btnStop          = document.getElementById('btn-stop');
+  const btnReload        = document.getElementById('btn-reload');
+  const inputUrl          = document.getElementById('model-url');
+  const btnApplyUrl       = document.getElementById('btn-apply-url');
 
-function renderCard(s) {
-  const bonos = s.bonos !== null && s.bonos > 0 ? '+' + s.bonos.toFixed(2) : '0.00';
-  const falt  = s.falta === 'No aplica' ? 'No aplica'
-              : s.falta !== null ? s.falta.toFixed(2) : '—';
-
-  return `
-  <div class="card">
-    <div class="card-header">
-      <div>
-        <div class="student-name">${s.nombre}</div>
-        <div class="student-id">ID: ${s.id}</div>
-      </div>
-      <div class="corte-badge">CORTE 3</div>
-    </div>
-
-    <div class="scores-grid">
-      <div class="score-block col-blue">
-        <div class="score-label">Quiz</div>
-        <div class="score-value">${fmt(s.quiz)}</div>
-        <div class="score-weight">Peso × 0.05</div>
-      </div>
-      <div class="score-block col-purple">
-        <div class="score-label">Trabajos</div>
-        <div class="score-value">${fmt3(s.nt)}</div>
-        <div class="score-weight">Peso × 0.50</div>
-      </div>
-      <div class="score-block col-orange">
-        <div class="score-label">Parcial</div>
-        <div class="score-value">${fmt(s.parc)}</div>
-        <div class="score-weight">Peso × 0.45</div>
-      </div>
-    </div>
-
-    <div class="breakdown">
-      <div class="breakdown-title">// desglose de ítems</div>
-      <div class="item-row">
-        <span class="item-name">Quiz</span>
-        <div style="display:flex;align-items:center">
-          <span class="item-val v-blue">${fmt(s.quiz)}</span>
-          ${s.quiz!==null?bar(s.quiz,5,'bar-blue'):''}
-        </div>
-      </div>
-      <div class="item-row">
-        <span class="item-name">Anteproyecto</span>
-        <div style="display:flex;align-items:center">
-          <span class="item-val v-purple">${fmt(s.anteproyecto)}</span>
-          ${s.anteproyecto!==null?bar(s.anteproyecto,5,'bar-purple'):''}
-        </div>
-      </div>
-      <div class="item-row">
-        <span class="item-name">Proyecto</span>
-        <div style="display:flex;align-items:center">
-          <span class="item-val v-purple">${fmt(s.proyecto)}</span>
-          ${s.proyecto!==null?bar(s.proyecto,5,'bar-purple'):''}
-        </div>
-      </div>
-      <div class="item-row">
-        <span class="item-name">Video</span>
-        <div style="display:flex;align-items:center">
-          <span class="item-val v-purple">${fmt(s.video)}</span>
-          ${s.video!==null?bar(s.video,5,'bar-purple'):''}
-        </div>
-      </div>
-      <div class="item-row">
-        <span class="item-name">Parcial</span>
-        <div style="display:flex;align-items:center">
-          <span class="item-val v-orange">${fmt(s.parc)}</span>
-          ${s.parc!==null?bar(s.parc,5,'bar-orange'):''}
-        </div>
-      </div>
-    </div>
-
-    <div class="finals">
-      <div class="final-block final-def">
-        <div class="final-label">// definitiva</div>
-        <div class="final-big">${fmt(s.def)}</div>
-        <div class="final-sub">nota calculada</div>
-      </div>
-      <div class="final-block final-sala">
-        <div class="final-label">// nota a sala</div>
-        <div class="final-big">${fmt1(s.sala)}</div>
-        <div class="final-sub">sistema SALA</div>
-      </div>
-    </div>
-
-    <div class="bono-strip">
-      <span>Firmas: <span class="bval">${s.firmas !== null ? s.firmas : '0'}</span></span>
-      <span>Bonos: <span class="bval">${bonos}</span></span>
-      <span>Para aprobar: <span class="bval">${falt}</span></span>
-    </div>
-  </div>`;
-}
-
-// ── Índices de columna (base 0) en hoja "Corte 3" ────────────────────
-// A(0)=id, C(2)=nombre, E(4)=quiz, F(5)=quiz_pond,
-// G(6)=anteproyecto, H(7)=proyecto, I(8)=video, J(9)=nt,
-// K(10)=parc, L(11)=np, M(12)=firmas, N(13)=bonos,
-// O(14)=def, P(15)=sala, Q(16)=falta
-const CI = {
-  id:0, nombre:2, quiz:4, nt:9,
-  anteproyecto:6, proyecto:7, video:8,
-  parc:10, np:11, firmas:12, bonos:13,
-  def:14, sala:15, falta:16
-};
-const DATA_START_ROW = 7; // fila 8 del Excel → índice 7
-
-let DATA   = [];
-let LOADED = false;
-
-async function loadExcel() {
-  const status = document.getElementById('statusBar');
-  const input  = document.getElementById('searchInput');
-  try {
-    status.className = 'loading';
-    status.textContent = '>_ conectando con la planilla...';
-
-    const FILENAME = 'Corte_3.xlsx';
-    const resp = await fetch(FILENAME);
-    if (!resp.ok) throw new Error(`No se encontró "${FILENAME}" (HTTP ${resp.status})`);
-
-    const buffer = await resp.arrayBuffer();
-    const wb = XLSX.read(buffer, { type: 'array', cellText: false });
-
-    const sheetName = wb.SheetNames.find(n => n.trim() === 'Corte 3');
-    if (!sheetName) throw new Error(`Hoja "Corte 3" no encontrada. Disponibles: ${wb.SheetNames.join(', ')}`);
-
-    const ws   = wb.Sheets[sheetName];
-    const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: null, raw: true });
-
-    DATA = rows
-      .slice(DATA_START_ROW)
-      .filter(row => row[CI.id] !== null && row[CI.id] !== undefined && row[CI.id] !== '')
-      .map(row => {
-        const rawId  = String(row[CI.id]).replace(/\.0+$/, '').replace(/\xa0/g, '').trim();
-        const nombre = String(row[CI.nombre] || '').replace(/\xa0/g, '').trim();
-
-        let falta = null;
-        const rawFalta = row[CI.falta];
-        if (rawFalta !== null && rawFalta !== undefined && rawFalta !== '') {
-          if (typeof rawFalta === 'string' && rawFalta.toLowerCase().includes('aplica')) {
-            falta = 'No aplica';
-          } else {
-            falta = n(rawFalta);
-          }
-        }
-
-        return {
-          id:           rawId,
-          nombre:       nombre,
-          quiz:         n(row[CI.quiz]),
-          anteproyecto: n(row[CI.anteproyecto]),
-          proyecto:     n(row[CI.proyecto]),
-          video:        n(row[CI.video]),
-          nt:           n(row[CI.nt]),
-          parc:         n(row[CI.parc]),
-          np:           n(row[CI.np]),
-          firmas:       n(row[CI.firmas]),
-          bonos:        n(row[CI.bonos]),
-          def:          n(row[CI.def]),
-          sala:         n(row[CI.sala]),
-          falta:        falta,
-        };
-      })
-      .filter(s => s.id);
-
-    LOADED = true;
-    status.className = 'ready';
-    status.textContent = `>_ planilla lista · ${DATA.length} estudiantes`;
-    input.disabled = false;
-    input.focus();
-
-  } catch (err) {
-    status.className = 'error';
-    status.textContent = `>_ ERROR: ${err.message}`;
-    console.error(err);
+  function setStatus(text, kind){
+    statusEl.textContent = text;
+    statusEl.className = 'status' + (kind ? ' ' + kind : '');
   }
-}
 
-// ── Búsqueda ──────────────────────────────────────────────────────────
-document.getElementById('searchInput').addEventListener('input', function() {
-  if (!LOADED) return;
-  const q      = this.value.trim().replace(/\D/g, '');
-  const result = document.getElementById('result');
-  if (!q || q.length < 4) { result.classList.remove('visible'); return; }
-
-  const found = DATA.find(s => s.id === q || s.id.startsWith(q));
-  result.classList.add('visible');
-
-  if (found) {
-    result.innerHTML = renderCard(found);
-    setTimeout(() => {
-      result.querySelectorAll('.bar-fill').forEach(b => {
-        const w = b.style.width; b.style.width = '0';
-        requestAnimationFrame(() => { b.style.width = w; });
-      });
-    }, 50);
-  } else {
-    result.innerHTML = `<div class="card"><div class="not-found">
-      &gt;_ DOCUMENTO NO ENCONTRADO<br>
-      <span style="color:#1a3a4a;font-size:0.8rem">Verifica tu número e intenta de nuevo</span>
-    </div></div>`;
+  function getModelUrl(){
+    const fromInput = inputUrl.value.trim();
+    let url = fromInput || MODEL_URL;
+    if(url && !url.endsWith('/')) url += '/';
+    return url;
   }
-});
 
-// ── Cursor ────────────────────────────────────────────────────────────
-const cursor = document.getElementById('cursor');
-const ring   = document.getElementById('cursorRing');
-let mx=0,my=0,rx=0,ry=0;
-document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; cursor.style.left=mx+'px'; cursor.style.top=my+'px'; });
-function animRing() { rx+=(mx-rx)*0.12; ry+=(my-ry)*0.12; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(animRing); }
-animRing();
-document.querySelectorAll('a,button,input').forEach(el => {
-  el.addEventListener('mouseenter', () => { cursor.style.transform='translate(-50%,-50%) scale(2)'; ring.style.width='56px'; ring.style.height='56px'; ring.style.borderColor='var(--purple)'; cursor.style.background='var(--purple)'; });
-  el.addEventListener('mouseleave', () => { cursor.style.transform='translate(-50%,-50%) scale(1)'; ring.style.width='36px'; ring.style.height='56px'; ring.style.borderColor='var(--blue)'; cursor.style.background='var(--blue)'; ring.style.height='36px'; });
-});
+  async function loadModel(){
+    const base = getModelUrl();
+    if(!base){
+      setStatus('Configura el enlace de tu modelo en el panel CONFIGURACIÓN de abajo.', 'err');
+      return false;
+    }
+    try{
+      setStatus('Cargando modelo…');
+      model = await tmImage.load(base + 'model.json', base + 'metadata.json');
+      setStatus('Modelo cargado. Presiona START.', 'ok');
+      return true;
+    }catch(err){
+      console.error(err);
+      setStatus('No se pudo cargar el modelo. Revisa el enlace en CONFIGURACIÓN.', 'err');
+      return false;
+    }
+  }
 
-loadExcel();
+  function buildPredictionRows(classLabels){
+    predsBox.innerHTML = '';
+    classLabels.forEach((label, i) => {
+      const row = document.createElement('div');
+      row.className = 'pred-row c' + (i % 3);
+      row.innerHTML = `
+        <div class="top">
+          <span class="pred-name">${label}</span>
+          <span class="pred-pct" id="pct-${i}">0%</span>
+        </div>
+        <div class="bar-track"><div class="bar-fill" id="bar-${i}"></div></div>
+      `;
+      predsBox.appendChild(row);
+    });
+  }
+
+  async function startWebcam(){
+    if(!model){
+      const ok = await loadModel();
+      if(!ok) return;
+    }
+    const flip = true;
+    webcam = new tmImage.Webcam(280, 280, flip);
+    await webcam.setup();
+    await webcam.play();
+
+    camPlaceholder.style.display = 'none';
+    camBox.innerHTML = '';
+    camBox.appendChild(webcam.canvas);
+
+    const classLabels = model.getClassLabels();
+    buildPredictionRows(classLabels);
+
+    running = true;
+    btnStart.disabled = true;
+    btnStop.disabled = false;
+    setStatus('Escaneando…', 'ok');
+    loop();
+  }
+
+  async function loop(){
+    if(!running) return;
+    webcam.update();
+    await predict();
+    window.requestAnimationFrame(loop);
+  }
+
+  async function predict(){
+    const predictions = await model.predict(webcam.canvas);
+    predictions.forEach((p, i) => {
+      const pct = Math.round(p.probability * 100);
+      const bar = document.getElementById('bar-' + i);
+      const pctEl = document.getElementById('pct-' + i);
+      if(bar) bar.style.width = pct + '%';
+      if(pctEl) pctEl.textContent = pct + '%';
+    });
+  }
+
+  function stopWebcam(){
+    running = false;
+    if(webcam){ webcam.stop(); }
+    btnStart.disabled = false;
+    btnStop.disabled = true;
+    setStatus('Detenido. Presiona START para reanudar.');
+    camPlaceholder.style.display = 'flex';
+    camBox.innerHTML = '';
+    camBox.appendChild(camPlaceholder);
+  }
+
+  btnStart.addEventListener('click', startWebcam);
+  btnStop.addEventListener('click', stopWebcam);
+  btnReload.addEventListener('click', async () => {
+    stopWebcam();
+    model = null;
+    await loadModel();
+  });
+  btnApplyUrl.addEventListener('click', async () => {
+    stopWebcam();
+    model = null;
+    await loadModel();
+  });
+
+  // pre-fill input with hardcoded MODEL_URL (if any) and try to load on start
+  if(MODEL_URL){ inputUrl.value = MODEL_URL; }
+  loadModel();
 </script>
+
 </body>
 </html>
