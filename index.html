@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Matemáticas 2 · Notas Corte 3</title>
+  <title>Matemáticas 2 · Notas Corte 1</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Oxanium:wght@300;400;600;800&display=swap" rel="stylesheet" />
@@ -64,7 +64,6 @@
     @keyframes drift { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(40px,30px) scale(1.08); } }
     main { position: relative; z-index: 1; }
 
-    /* ── Header ── */
     header { padding: 60px 24px 40px; text-align: center; }
     .badge {
       display: inline-block; font-family: var(--font-mono); font-size: 0.7rem;
@@ -74,19 +73,17 @@
     }
     @keyframes pulse-border { 0%,100% { box-shadow: var(--glow-b); } 50% { box-shadow: 0 0 16px #00cfff, 0 0 40px #00cfff44; } }
     h1 { font-size: clamp(1.6rem,5vw,3.6rem); font-weight: 800; line-height: 1.05; letter-spacing: -0.02em; text-transform: uppercase; }
-    h1 .line-blue   { color: var(--blue);   text-shadow: var(--glow-b); }
-    h1 .line-white  { color: var(--white); }
+    h1 .line-blue  { color: var(--blue);  text-shadow: var(--glow-b); }
+    h1 .line-white { color: var(--white); }
     .subtitle { margin-top: 16px; font-family: var(--font-mono); font-size: 0.85rem; color: #6a8a9a; letter-spacing: 0.1em; }
     .subtitle span { color: var(--purple); text-shadow: var(--glow-p); }
 
-    /* ── Divider ── */
     .divider { display: flex; align-items: center; gap: 16px; max-width: 700px; margin: 40px auto; padding: 0 24px; }
     .divider::before, .divider::after { content: ''; flex: 1; height: 1px; }
     .divider::before { background: linear-gradient(90deg, transparent, var(--purple)); }
     .divider::after  { background: linear-gradient(90deg, var(--purple), transparent); }
     .divider-icon { width: 8px; height: 8px; background: var(--purple); transform: rotate(45deg); box-shadow: var(--glow-p); flex-shrink: 0; }
 
-    /* ── Status ── */
     #statusBar {
       max-width: 600px; margin: 0 auto 16px; padding: 0 24px;
       font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.12em;
@@ -96,7 +93,6 @@
     #statusBar.ready   { color: var(--green-dim); }
     #statusBar.error   { color: var(--orange); }
 
-    /* ── Search ── */
     .search-section { max-width: 600px; margin: 0 auto 48px; padding: 0 24px; text-align: center; }
     .search-label { font-family: var(--font-mono); font-size: 0.75rem; color: var(--purple); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 12px; display: block; }
     .search-wrap { position: relative; display: flex; align-items: center; }
@@ -112,7 +108,6 @@
     #searchInput::placeholder { color: #1a3a4a; }
     #searchInput:disabled { opacity: 0.4; cursor: not-allowed; }
 
-    /* ── Result card ── */
     #result { max-width: 660px; margin: 0 auto 64px; padding: 0 24px; display: none; }
     #result.visible { display: block; animation: fadeUp 0.4s ease; }
     @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
@@ -125,18 +120,17 @@
     .student-id { font-family: var(--font-mono); font-size: 0.8rem; color: var(--blue); margin-top: 4px; }
     .corte-badge { font-family: var(--font-mono); font-size: 0.7rem; color: var(--purple); border: 1px solid var(--purple); padding: 4px 12px; letter-spacing: 0.15em; box-shadow: var(--glow-p); }
 
-    /* ── Scores grid — 3 bloques ── */
-    .scores-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; border-bottom: 1px solid #0d1a25; }
+    /* 2 bloques: Trabajos | Parcial */
+    .scores-grid { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid #0d1a25; }
     .score-block { padding: 20px 22px; border-right: 1px solid #0d1a25; }
     .score-block:last-child { border-right: none; }
     .score-label { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: #4a6a7a; margin-bottom: 8px; }
-    .score-value { font-size: 1.8rem; font-weight: 800; line-height: 1; }
+    .score-value { font-size: 2rem; font-weight: 800; line-height: 1; }
     .score-weight { font-family: var(--font-mono); font-size: 0.65rem; color: #3a5a6a; margin-top: 6px; }
     .col-blue   .score-value { color: var(--blue);   text-shadow: var(--glow-b); }
     .col-purple .score-value { color: var(--purple);  text-shadow: var(--glow-p); }
     .col-orange .score-value { color: var(--orange);  text-shadow: var(--glow-o); }
 
-    /* ── Breakdown ── */
     .breakdown { padding: 20px 28px; border-bottom: 1px solid #0d1a25; }
     .breakdown-title { font-family: var(--font-mono); font-size: 0.65rem; color: #4a6a7a; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 14px; }
     .item-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 1px solid #0d1520; font-size: 0.88rem; }
@@ -152,7 +146,6 @@
     .bar-purple { background:var(--purple);  box-shadow:var(--glow-p); }
     .bar-orange { background:var(--orange);  box-shadow:var(--glow-o); }
 
-    /* ── Finals ── */
     .finals { display: grid; grid-template-columns: 1fr 1fr; }
     .final-block { padding: 24px 28px; border-right: 1px solid #0d1a25; text-align: center; }
     .final-block:last-child { border-right: none; }
@@ -173,8 +166,9 @@
     footer span { color: #3a5a6a; }
 
     @media (max-width: 600px) {
-      .scores-grid { grid-template-columns: 1fr 1fr; }
-      .scores-grid .score-block:nth-child(3) { grid-column: 1 / -1; }
+      .scores-grid { grid-template-columns: 1fr; }
+      .score-block { border-right: none; border-bottom: 1px solid #0d1a25; }
+      .score-block:last-child { border-bottom: none; }
       .finals { grid-template-columns: 1fr; }
       .final-block { border-right: none; border-bottom: 1px solid #0d1a25; }
       .final-block:last-child { border-bottom: none; }
@@ -192,13 +186,13 @@
 
 <main>
   <header>
-    <div class="badge">CORTE 3 · 2026-1</div>
+    <div class="badge">CORTE 1 · 2026-2</div>
     <h1>
       <span class="line-blue">Matemáticas 2</span><br>
       <span class="line-white">Cálculo Integral</span>
     </h1>
     <p class="subtitle">
-      Grupo <span>G2</span> &nbsp;·&nbsp;
+      Grupo <span>2Q</span> &nbsp;·&nbsp;
       David Mauricio Valoyes Porras &nbsp;·&nbsp;
       Universidad El Bosque
     </p>
@@ -227,12 +221,11 @@
 </main>
 
 <footer>
-  <span>Matemáticas 2 · Semestre 2026-1 · Grupo G2</span>
+  <span>Matemáticas 2 · Semestre 2026-2 · Grupo 2Q</span>
   &nbsp;·&nbsp; Universidad El Bosque
 </footer>
 
 <script>
-// ── Helpers ───────────────────────────────────────────────────────────
 function n(v) {
   if (v === null || v === undefined || v === '') return null;
   if (typeof v === 'string' && (v.includes('#') || v.trim() === '')) return null;
@@ -240,8 +233,7 @@ function n(v) {
   return isNaN(p) ? null : p;
 }
 const fmt  = v => v !== null ? v.toFixed(2) : '—';
-const fmt3 = v => v !== null ? v.toFixed(3) : '—';
-const fmt1 = v => v !== null ? v.toFixed(1)  : '—';
+const fmt1 = v => v !== null ? v.toFixed(1) : '—';
 
 function bar(val, max, cls) {
   const pct = val !== null ? Math.min(100, (val / max) * 100) : 0;
@@ -260,55 +252,37 @@ function renderCard(s) {
         <div class="student-name">${s.nombre}</div>
         <div class="student-id">ID: ${s.id}</div>
       </div>
-      <div class="corte-badge">CORTE 3</div>
+      <div class="corte-badge">CORTE 1</div>
     </div>
 
+    <!-- 2 bloques: Trabajos (×0.5) | Parcial (×0.5) -->
     <div class="scores-grid">
-      <div class="score-block col-blue">
-        <div class="score-label">Quiz</div>
-        <div class="score-value">${fmt(s.quiz)}</div>
-        <div class="score-weight">Peso × 0.05</div>
-      </div>
       <div class="score-block col-purple">
         <div class="score-label">Trabajos</div>
-        <div class="score-value">${fmt3(s.nt)}</div>
+        <div class="score-value">${fmt(s.nt_pond)}</div>
         <div class="score-weight">Peso × 0.50</div>
       </div>
       <div class="score-block col-orange">
         <div class="score-label">Parcial</div>
-        <div class="score-value">${fmt(s.parc)}</div>
-        <div class="score-weight">Peso × 0.45</div>
+        <div class="score-value">${fmt(s.parc_pond)}</div>
+        <div class="score-weight">Peso × 0.50</div>
       </div>
     </div>
 
     <div class="breakdown">
       <div class="breakdown-title">// desglose de ítems</div>
       <div class="item-row">
-        <span class="item-name">Quiz</span>
+        <span class="item-name">Taller 1</span>
         <div style="display:flex;align-items:center">
-          <span class="item-val v-blue">${fmt(s.quiz)}</span>
-          ${s.quiz!==null?bar(s.quiz,5,'bar-blue'):''}
+          <span class="item-val v-purple">${fmt(s.taller1)}</span>
+          ${s.taller1!==null?bar(s.taller1,5,'bar-purple'):''}
         </div>
       </div>
       <div class="item-row">
-        <span class="item-name">Anteproyecto</span>
+        <span class="item-name">Taller 2</span>
         <div style="display:flex;align-items:center">
-          <span class="item-val v-purple">${fmt(s.anteproyecto)}</span>
-          ${s.anteproyecto!==null?bar(s.anteproyecto,5,'bar-purple'):''}
-        </div>
-      </div>
-      <div class="item-row">
-        <span class="item-name">Proyecto</span>
-        <div style="display:flex;align-items:center">
-          <span class="item-val v-purple">${fmt(s.proyecto)}</span>
-          ${s.proyecto!==null?bar(s.proyecto,5,'bar-purple'):''}
-        </div>
-      </div>
-      <div class="item-row">
-        <span class="item-name">Video</span>
-        <div style="display:flex;align-items:center">
-          <span class="item-val v-purple">${fmt(s.video)}</span>
-          ${s.video!==null?bar(s.video,5,'bar-purple'):''}
+          <span class="item-val v-purple">${fmt(s.taller2)}</span>
+          ${s.taller2!==null?bar(s.taller2,5,'bar-purple'):''}
         </div>
       </div>
       <div class="item-row">
@@ -334,25 +308,26 @@ function renderCard(s) {
     </div>
 
     <div class="bono-strip">
-      <span>Firmas: <span class="bval">${s.firmas !== null ? s.firmas : '0'}</span></span>
       <span>Bonos: <span class="bval">${bonos}</span></span>
       <span>Para aprobar: <span class="bval">${falt}</span></span>
     </div>
   </div>`;
 }
 
-// ── Índices de columna (base 0) en hoja "Corte 3" ────────────────────
-// A(0)=id, C(2)=nombre, E(4)=quiz, F(5)=quiz_pond,
-// G(6)=anteproyecto, H(7)=proyecto, I(8)=video, J(9)=nt,
-// K(10)=parc, L(11)=np, M(12)=firmas, N(13)=bonos,
-// O(14)=def, P(15)=sala, Q(16)=falta
+// Hoja "Corte 1" — índices base 0:
+// A(0)=id, C(2)=nombre
+// E(4)=taller1, F(5)=taller2
+// G(6)=nt_pond (trabajos ×0.5), H(7)=parc, I(8)=parc_pond (parcial ×0.5)
+// J(9)=actividad_bono, K(10)=bonos
+// L(11)=def, M(12)=sala, N(13)=falta
 const CI = {
-  id:0, nombre:2, quiz:4, nt:9,
-  anteproyecto:6, proyecto:7, video:8,
-  parc:10, np:11, firmas:12, bonos:13,
-  def:14, sala:15, falta:16
+  id:0, nombre:2,
+  taller1:4, taller2:5,
+  nt_pond:6, parc:7, parc_pond:8,
+  bonos:10,
+  def:11, sala:12, falta:13
 };
-const DATA_START_ROW = 7; // fila 8 del Excel → índice 7
+const DATA_START_ROW = 7;
 
 let DATA   = [];
 let LOADED = false;
@@ -364,15 +339,14 @@ async function loadExcel() {
     status.className = 'loading';
     status.textContent = '>_ conectando con la planilla...';
 
-    const FILENAME = 'Corte_3.xlsx';
-    const resp = await fetch(FILENAME);
-    if (!resp.ok) throw new Error(`No se encontró "${FILENAME}" (HTTP ${resp.status})`);
+    const resp = await fetch('Corte_1.xlsx');
+    if (!resp.ok) throw new Error(`No se encontró "Corte_1.xlsx" (HTTP ${resp.status})`);
 
     const buffer = await resp.arrayBuffer();
     const wb = XLSX.read(buffer, { type: 'array', cellText: false });
 
-    const sheetName = wb.SheetNames.find(n => n.trim() === 'Corte 3');
-    if (!sheetName) throw new Error(`Hoja "Corte 3" no encontrada. Disponibles: ${wb.SheetNames.join(', ')}`);
+    const sheetName = wb.SheetNames.find(n => n.trim() === 'Corte 1');
+    if (!sheetName) throw new Error(`Hoja "Corte 1" no encontrada. Disponibles: ${wb.SheetNames.join(', ')}`);
 
     const ws   = wb.Sheets[sheetName];
     const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: null, raw: true });
@@ -389,26 +363,25 @@ async function loadExcel() {
         if (rawFalta !== null && rawFalta !== undefined && rawFalta !== '') {
           if (typeof rawFalta === 'string' && rawFalta.toLowerCase().includes('aplica')) {
             falta = 'No aplica';
+          } else if (typeof rawFalta === 'string' && rawFalta.includes('#')) {
+            falta = null;
           } else {
             falta = n(rawFalta);
           }
         }
 
         return {
-          id:           rawId,
-          nombre:       nombre,
-          quiz:         n(row[CI.quiz]),
-          anteproyecto: n(row[CI.anteproyecto]),
-          proyecto:     n(row[CI.proyecto]),
-          video:        n(row[CI.video]),
-          nt:           n(row[CI.nt]),
-          parc:         n(row[CI.parc]),
-          np:           n(row[CI.np]),
-          firmas:       n(row[CI.firmas]),
-          bonos:        n(row[CI.bonos]),
-          def:          n(row[CI.def]),
-          sala:         n(row[CI.sala]),
-          falta:        falta,
+          id:       rawId,
+          nombre:   nombre,
+          taller1:  n(row[CI.taller1]),
+          taller2:  n(row[CI.taller2]),
+          nt_pond:  n(row[CI.nt_pond]),
+          parc:     n(row[CI.parc]),
+          parc_pond:n(row[CI.parc_pond]),
+          bonos:    n(row[CI.bonos]),
+          def:      n(row[CI.def]),
+          sala:     n(row[CI.sala]),
+          falta:    falta,
         };
       })
       .filter(s => s.id);
@@ -426,7 +399,6 @@ async function loadExcel() {
   }
 }
 
-// ── Búsqueda ──────────────────────────────────────────────────────────
 document.getElementById('searchInput').addEventListener('input', function() {
   if (!LOADED) return;
   const q      = this.value.trim().replace(/\D/g, '');
@@ -452,7 +424,6 @@ document.getElementById('searchInput').addEventListener('input', function() {
   }
 });
 
-// ── Cursor ────────────────────────────────────────────────────────────
 const cursor = document.getElementById('cursor');
 const ring   = document.getElementById('cursorRing');
 let mx=0,my=0,rx=0,ry=0;
@@ -460,8 +431,16 @@ document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; cursor
 function animRing() { rx+=(mx-rx)*0.12; ry+=(my-ry)*0.12; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(animRing); }
 animRing();
 document.querySelectorAll('a,button,input').forEach(el => {
-  el.addEventListener('mouseenter', () => { cursor.style.transform='translate(-50%,-50%) scale(2)'; ring.style.width='56px'; ring.style.height='56px'; ring.style.borderColor='var(--purple)'; cursor.style.background='var(--purple)'; });
-  el.addEventListener('mouseleave', () => { cursor.style.transform='translate(-50%,-50%) scale(1)'; ring.style.width='36px'; ring.style.height='56px'; ring.style.borderColor='var(--blue)'; cursor.style.background='var(--blue)'; ring.style.height='36px'; });
+  el.addEventListener('mouseenter', () => {
+    cursor.style.transform='translate(-50%,-50%) scale(2)';
+    ring.style.width='56px'; ring.style.height='56px';
+    ring.style.borderColor='var(--purple)'; cursor.style.background='var(--purple)';
+  });
+  el.addEventListener('mouseleave', () => {
+    cursor.style.transform='translate(-50%,-50%) scale(1)';
+    ring.style.width='36px'; ring.style.height='36px';
+    ring.style.borderColor='var(--blue)'; cursor.style.background='var(--blue)';
+  });
 });
 
 loadExcel();
