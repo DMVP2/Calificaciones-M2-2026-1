@@ -154,16 +154,21 @@
     .bar-amber  { background:var(--amber);  box-shadow:var(--glow-a); }
     .bar-red    { background:var(--red-neon); box-shadow:var(--glow-r); }
 
-    .finals { display: grid; grid-template-columns: 1fr 1fr; }
-    .final-block { padding: 24px 28px; border-right: 1px solid #1a0800; text-align: center; }
+    .finals { display: grid; grid-template-columns: 1fr 1fr 1fr; }
+    .final-block { padding: 20px 16px; border-right: 1px solid #1a0800; text-align: center; }
     .final-block:last-child { border-right: none; }
-    .final-label { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.2em; color: #5a3010; text-transform: uppercase; margin-bottom: 10px; }
-    .final-big   { font-size: 3rem; font-weight: 800; line-height: 1; }
-    .final-def  .final-big { color: var(--orange); text-shadow: 0 0 12px #ff6a00, 0 0 44px #ff6a0066; }
-    .final-sala .final-big { color: var(--amber);  text-shadow: 0 0 12px #ffb700, 0 0 44px #ffb70066; }
-    .final-sub { font-family: var(--font-mono); font-size: 0.7rem; margin-top: 6px; }
-    .final-def  .final-sub { color: var(--orange-dim); }
-    .final-sala .final-sub { color: var(--amber-dim); }
+    .final-label { font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.15em; color: #5a3010; text-transform: uppercase; margin-bottom: 10px; }
+    .final-big   { font-size: 2.4rem; font-weight: 800; line-height: 1; }
+    .final-def-sf .final-big { color: var(--orange-pale); text-shadow: 0 0 10px #ff9a4566, 0 0 30px #ff9a4533; }
+    .final-def-cf .final-big { color: var(--orange);      text-shadow: 0 0 12px #ff6a00, 0 0 44px #ff6a0066; }
+    .final-sala   .final-big { color: var(--amber);       text-shadow: 0 0 12px #ffb700, 0 0 44px #ffb70066; }
+    .final-sub { font-family: var(--font-mono); font-size: 0.65rem; margin-top: 6px; }
+    .final-def-sf .final-sub { color: var(--orange-dim); opacity: 0.7; }
+    .final-def-cf .final-sub { color: var(--orange-dim); }
+    .final-sala   .final-sub { color: var(--amber-dim); }
+    /* separador visual entre def-sf y def-cf */
+    .final-def-cf { position: relative; }
+    .final-def-cf::before { content: '+ firmas'; position: absolute; top: 8px; left: 50%; transform: translateX(-50%); font-family: var(--font-mono); font-size: 0.55rem; color: var(--yellow); letter-spacing: 0.1em; opacity: 0.6; }
 
     .bono-strip {
       padding: 12px 28px; border-top: 1px solid #1a0800;
@@ -178,12 +183,18 @@
     footer { text-align: center; padding: 32px 24px 48px; border-top: 1px solid #1a0800; font-family: var(--font-mono); font-size: 0.7rem; color: #3a1a00; position: relative; z-index: 1; }
     footer span { color: #5a3010; }
 
-    @media (max-width: 600px) {
+    @media (max-width: 640px) {
       .scores-grid { grid-template-columns: 1fr; }
-      .finals { grid-template-columns: 1fr; }
-      .final-block { border-right: none; border-bottom: 1px solid #1a0800; }
-      .final-block:last-child { border-bottom: none; }
+      .finals { grid-template-columns: 1fr 1fr; }
+      .finals .final-block:nth-child(2) { border-right: none; }
+      .finals .final-block:nth-child(3) { grid-column: 1 / -1; border-right: none; border-top: 1px solid #1a0800; }
+      .final-block { border-right: none; }
       .bono-strip { font-size: 0.68rem; }
+    }
+    @media (max-width: 420px) {
+      .finals { grid-template-columns: 1fr; }
+      .finals .final-block:nth-child(2) { border-right: none; border-top: 1px solid #1a0800; }
+      .finals .final-block:nth-child(3) { grid-column: auto; }
     }
   </style>
 </head>
@@ -310,10 +321,15 @@ function renderCard(s) {
     </div>
 
     <div class="finals">
-      <div class="final-block final-def">
-        <div class="final-label">// definitiva</div>
-        <div class="final-big">${fmt(s.def)}</div>
-        <div class="final-sub">nota calculada</div>
+      <div class="final-block final-def-sf">
+        <div class="final-label">// def. sin firmas</div>
+        <div class="final-big">${fmt(s.def_sf)}</div>
+        <div class="final-sub">sin bono</div>
+      </div>
+      <div class="final-block final-def-cf">
+        <div class="final-label">// def. con firmas</div>
+        <div class="final-big">${fmt(s.def_cf)}</div>
+        <div class="final-sub">con bono asistencia</div>
       </div>
       <div class="final-block final-sala">
         <div class="final-label">// nota a sala</div>
@@ -333,13 +349,15 @@ function renderCard(s) {
 // E(4)=taller3, F(5)=nt_pond (×0.5)
 // G(6)=parcial, H(7)=parc_pond (×0.5)
 // I(8)=firmas (bono), J(9)=bonos (total)
-// K(10)=def, L(11)=sala, M(12)=falta
+// K(10)=def_sf (sin firmas), L(11)=def_cf (con firmas)
+// M(12)=sala, N(13)=falta
 const CI = {
   id:0, nombre:2,
   taller3:4, nt_pond:5,
   parcial:6, parc_pond:7,
   firmas:8, bonos:9,
-  def:10, sala:11, falta:12
+  def_sf:10, def_cf:11,
+  sala:12, falta:13
 };
 const DATA_START_ROW = 7;
 
@@ -399,7 +417,8 @@ async function loadExcel() {
           parc_pond:n(row[CI.parc_pond]),
           firmas:   firmas,
           bonos:    n(row[CI.bonos]),
-          def:      n(row[CI.def]),
+          def_sf:   n(row[CI.def_sf]),
+          def_cf:   n(row[CI.def_cf]),
           sala:     n(row[CI.sala]),
           falta:    falta,
         };
